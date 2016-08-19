@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "WiFireSample";
 
-    private static final String API_KEY = "6CZcDjYYNVd3iCE8ulFYwWO3rhy1";
+    private static final String API_KEY = "YOUR_API_KEY";
 
     WiFire wiFire;
     Context mContext;
