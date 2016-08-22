@@ -16,6 +16,7 @@ WiFire SDK for Android devices
 		compile(name: 'WiFireSDK', ext: 'aar')
 		compile 'com.google.firebase:firebase-database:9.4.0'
 		compile 'com.google.firebase:firebase-auth:9.4.0'
+        compile 'com.google.firebase:firebase-storage:9.4.0'
 		compile 'com.google.android.gms:play-services-base:9.4.0'
 		compile 'com.google.android.gms:play-services-location:9.4.0'
 		compile 'com.firebase:geofire-android:2.0.0'
