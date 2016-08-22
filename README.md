@@ -26,7 +26,7 @@ WiFire SDK for Android devices
 
 ## Usage
 
-#### 1. Initialise the SDK (preferably in the Application class)
+#### 1. Initialise the SDK with your API key (preferably in the Application class)
 
 	WiFire.initialise(getApplicationContext(), "MY_API_KEY", new AuthListener() {
         @Override
