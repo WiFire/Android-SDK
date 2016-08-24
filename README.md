@@ -4,7 +4,7 @@ WiFire SDK for Android devices
 ## Integration with your existing project in Android Studio
 
 1. Download or clone this repo on your system.
-2. Copy the [WiFireSDK.aar](https://github.com/WiFire/Android-SDK/Releases/WiFireSDK.aar) file into the `libs` directory of your app. Refer the included sample app for example.
+2. Copy the [WiFireSDK.aar](https://github.com/WiFire/Android-SDK/blob/master/WiFireSDKSample/app/libs/WifireSDK.aar) file into the `libs` directory of your app. Refer the included sample app for example.
 3. In the `build.gradle` file of your project, add the following in the repositories section
 
 ```groovy
