@@ -32,7 +32,7 @@ compile 'com.firebase:geofire-android:2.0.0'
 
 #### 1. Initialise the SDK with your API key (preferably in the Application class)
 
-```
+```java
 WiFire.initialise(getApplicationContext(), "MY_API_KEY", new AuthListener() {
     @Override
     public void onSuccess() {
@@ -48,13 +48,13 @@ WiFire.initialise(getApplicationContext(), "MY_API_KEY", new AuthListener() {
 
 #### 2. Get WiFire instance
 
-```
+```java
 WiFire wiFire = WiFire.getInstance();
 ```
 
 #### 3. Syncing for Hotspots
 
-```	
+```java
 //Starting sync
 @Override
 public void onResume() {
@@ -78,7 +78,7 @@ While sync is enabled WiFire will both perform WiFire scanning and sync WiFire h
 
 #### 4. Getting list of WiFire hotspots
 
-```
+```java
 wiFire.setHotSpotListener(new HotSpotListener() {
     @Override
     public void onScanComplete(ArrayList<WiFireHotspot> wiFireHotSpots) {
@@ -93,7 +93,7 @@ A list will be delivered every ~10 seconds.
 
 #### 5. Connecting to a network
 
-```
+```java
 wiFire.connectToNetwork(hotspot, new ConnectionListener() {
         
     @Override
@@ -112,7 +112,7 @@ wiFire.connectToNetwork(hotspot, new ConnectionListener() {
 
 To listen to WiFi connection/state changes you can create a `BroadcastReceiver` which extends `com.mobstac.wifire.receivers.WiFiStateReceiver`
 
-```
+```java
 public class WiFireStateReceiver extends WiFiStateReceiver {
 
     @Override
@@ -146,7 +146,7 @@ Set-up the `intent filter` for it like this
 
 #### 7. Starting automatic network login
 
-```
+```java
 wiFire.startAutomaticLogin(this, new AutomaticLoginStartListener() {
     @Override
     public void onStart() {
@@ -163,7 +163,7 @@ wiFire.startAutomaticLogin(this, new AutomaticLoginStartListener() {
 This will launch an activity which will take care of the login flow.
 To check if the activity successfully completed login, use `onActivityResult()`
 
-```
+```java
 @Override
 public void onActivityResult(int requestCode, int responseCode, Intent data) {
     super.onActivityResult(requestCode, responseCode, data);
@@ -179,7 +179,7 @@ public void onActivityResult(int requestCode, int responseCode, Intent data) {
 
 #### 8. Get current WiFi's state 
 
-```
+```java
 wiFire.getCurrentState(new NetworkStateListener() {
     @Override
     public void onResult(WiFiState wiFiState) {
@@ -203,7 +203,7 @@ wiFire.getCurrentState(new NetworkStateListener() {
 
 #### 9. Get the SSID of the current network
 
-```
+```java
 String networkName = wiFire.getCurrentNetworkName();
 ```
 
@@ -212,7 +212,7 @@ String networkName = wiFire.getCurrentNetworkName();
 
 #### 10. Check if the current network is a WiFire verified public network
 
-```
+```java
 boolean verified = wiFire.isWiFireNetwork();
 ```
 
