@@ -2,9 +2,12 @@ package com.mobstac.wifire.sdksample;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,6 +30,7 @@ import com.mobstac.wifire.interfaces.NetworkStateListener;
 import com.mobstac.wifire.models.WiFireHotspot;
 import com.mobstac.wifire.sdksample.adapters.WiFireAdapter;
 import com.mobstac.wifire.sdksample.dialogFragments.UserDetailsDialog;
+import com.mobstac.wifire.sdksample.receivers.WiFireStateReceiver;
 import com.mobstac.wifire.sdksample.utils.Util;
 
 import java.util.ArrayList;
@@ -44,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView.LayoutManager layoutManager;
     WiFireAdapter mAdapter;
     TextView errorText;
+
+    Snackbar snackbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +97,14 @@ public class MainActivity extends AppCompatActivity {
         boolean notificationClicked = getIntent().getBooleanExtra("wifireNotificationClicked", false);
         if (notificationClicked)
             startCaptiveLogin();
+
+        snackbar = Snackbar.make(wiFireList, "This network requires a login", Snackbar.LENGTH_INDEFINITE)
+                .setAction("Login", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startCaptiveLogin();
+                    }
+                });
 
     }
 
@@ -171,12 +185,14 @@ public class MainActivity extends AppCompatActivity {
         if (wiFire != null) {
             wiFire.disableSync();
         }
+        unregisterReceiver(captiveReceiver);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         startSyncing();
+        registerReceiver(captiveReceiver, new IntentFilter(WiFireStateReceiver.BROADCAST_CAPTIVE_NETWORK));
     }
 
     private void startSyncing() {
@@ -300,7 +316,14 @@ public class MainActivity extends AppCompatActivity {
         boolean notificationClicked = intent.getBooleanExtra("wifireNotificationClicked", false);
         if (notificationClicked)
             startCaptiveLogin();
-
     }
+
+    BroadcastReceiver captiveReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (snackbar != null && !snackbar.isShown())
+                snackbar.show();
+        }
+    };
 
 }
