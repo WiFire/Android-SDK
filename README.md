@@ -7,15 +7,15 @@ WiFire SDK for Android devices
 2. Copy the [WiFireSDK.aar](https://github.com/WiFire/Android-SDK/Releases/WiFireSDK.aar) file into the `libs` directory of your app. Refer the included sample app for example.
 3. In the `build.gradle` file of your project, add the following in the repositories section
 
-```
+```groovy
 flatDir {
-dirs 'libs'
+    dirs 'libs'
 }
 ```
 
 4. In the `build.gradle` file of the app, add the following in the dependencies section:
 
-```
+```groovy
 compile(name: 'WiFireSDK', ext: 'aar')
 compile 'com.google.firebase:firebase-database:9.4.0'
 compile 'com.google.firebase:firebase-auth:9.4.0'
@@ -134,7 +134,7 @@ public class WiFireStateReceiver extends WiFiStateReceiver {
 
 Set-up the `intent filter` for it like this
 
-```
+```xml
 <receiver
     android:name=".my.package.WiFireStateReceiver"
     android:enabled="true">
