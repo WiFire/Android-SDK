@@ -32,6 +32,8 @@ compile 'com.firebase:geofire-android:2.0.0'
 
 #### 1. Initialise the SDK with your API key (preferably in the Application class)
 
+##### Note: The API key is tied to the package name of your app and will not work with another app.
+
 ```java
 WiFire.initialise(getApplicationContext(), "MY_API_KEY", new AuthListener() {
     @Override
