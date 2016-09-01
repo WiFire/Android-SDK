@@ -1,5 +1,6 @@
-# Android-SDK
-WiFire SDK for Android devices
+# WiFire SDK for Android. Allows apps to embed WiFire functionality - see www.getwifireapp.com
+
+You will need an API key for the WiFire SDK service to work. Please email wifire.bizdev@mobstac.com to get an API key.
 
 ## Integration with your existing project in Android Studio
 
