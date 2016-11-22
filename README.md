@@ -4,30 +4,18 @@ You will need an API key for the WiFire SDK service to work. Please email wifire
 
 ## Integration with your existing project in Android Studio
 
-1. Download or clone this repo on your system.
-2. Copy the [WiFireSDK.aar](https://github.com/WiFire/Android-SDK/blob/master/WiFireSDKSample/app/libs/WifireSDK.aar) file into the `libs` directory of your app. Refer the included sample app for example.
-3. In the `build.gradle` file of your project, add the following in the repositories section
+#### In the `build.gradle` file of the app, add the following in the dependencies section:
 
 ```groovy
-flatDir {
-    dirs 'libs'
+dependencies {
+    ...
+    compile 'com.mobstac.wifire:WifireSDK:0.92'
 }
 ```
 
-4. In the `build.gradle` file of the app, add the following in the dependencies section:
+##### Latest version
 
-```groovy
-compile(name: 'WiFireSDK', ext: 'aar')
-compile 'com.google.firebase:firebase-database:9.4.0'
-compile 'com.google.firebase:firebase-auth:9.4.0'
-compile 'com.google.firebase:firebase-storage:9.4.0'
-compile 'com.google.android.gms:play-services-base:9.4.0'
-compile 'com.google.android.gms:play-services-location:9.4.0'
-compile 'com.firebase:geofire-android:2.0.0'
-```
-
-5. Perform a gradle sync ( ⌘+F9 or Ctrl + F9)
-
+[ ![WiFireSDK](https://api.bintray.com/packages/mobstac/maven/WiFireSDK/images/download.svg) ](https://bintray.com/mobstac/maven/WiFireSDK/_latestVersion)
 
 ## Usage
 
