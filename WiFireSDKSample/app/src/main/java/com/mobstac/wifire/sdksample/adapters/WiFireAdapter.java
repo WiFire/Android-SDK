@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.mobstac.wifire.models.WiFireHotspot;
+import com.mobstac.wifire.WiFireHotspot;
 import com.mobstac.wifire.sdksample.MainActivity;
 import com.mobstac.wifire.sdksample.R;
 

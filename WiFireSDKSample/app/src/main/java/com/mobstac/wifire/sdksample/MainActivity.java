@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.mobstac.wifire.WiFire;
+import com.mobstac.wifire.WiFireHotspot;
 import com.mobstac.wifire.core.WiFireException;
 import com.mobstac.wifire.enums.WiFiState;
 import com.mobstac.wifire.interfaces.AuthListener;
@@ -27,7 +28,6 @@ import com.mobstac.wifire.interfaces.AutomaticLoginStartListener;
 import com.mobstac.wifire.interfaces.ConnectionListener;
 import com.mobstac.wifire.interfaces.HotSpotListener;
 import com.mobstac.wifire.interfaces.NetworkStateListener;
-import com.mobstac.wifire.models.WiFireHotspot;
 import com.mobstac.wifire.sdksample.adapters.WiFireAdapter;
 import com.mobstac.wifire.sdksample.dialogFragments.UserDetailsDialog;
 import com.mobstac.wifire.sdksample.receivers.WiFireStateReceiver;

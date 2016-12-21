@@ -9,7 +9,7 @@ You will need an API key for the WiFire SDK service to work. Please email wifire
 ```groovy
 dependencies {
     ...
-    compile 'com.mobstac.wifire:WifireSDK:0.92'
+    compile 'com.mobstac.wifire:WifireSDK:0.9.5'
 }
 ```
 
@@ -207,3 +207,13 @@ String networkName = wiFire.getCurrentNetworkName();
 boolean verified = wiFire.isWiFireNetwork();
 ```
 
+#### 11. Setting user details
+
+As per TRAI regulations a public WiFi hotspot is supposed to collect the user's phone number
+
+```java
+WiFire.getInstance().setUserDetails(countryCode, phoneNumber, emailID, name);
+```
+
+You will need to set the user's details in the SDK before connecting to a network.
+Email ID and name fields are optional, but some providers need it before they give you internet access.
