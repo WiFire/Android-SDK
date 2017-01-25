@@ -13,7 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,13 +20,14 @@ import android.widget.TextView;
 
 import com.mobstac.wifire.WiFire;
 import com.mobstac.wifire.WiFireHotspot;
+import com.mobstac.wifire.core.ErrorCodes;
 import com.mobstac.wifire.core.WiFireException;
 import com.mobstac.wifire.enums.WiFiState;
 import com.mobstac.wifire.interfaces.AuthListener;
-import com.mobstac.wifire.interfaces.AutomaticLoginStartListener;
 import com.mobstac.wifire.interfaces.ConnectionListener;
 import com.mobstac.wifire.interfaces.HotSpotListener;
 import com.mobstac.wifire.interfaces.NetworkStateListener;
+import com.mobstac.wifire.interfaces.WiFireErrorListener;
 import com.mobstac.wifire.sdksample.adapters.WiFireAdapter;
 import com.mobstac.wifire.sdksample.dialogFragments.UserDetailsDialog;
 import com.mobstac.wifire.sdksample.receivers.WiFireStateReceiver;
@@ -108,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     private void getNetworkState() {
 
         wiFire.getCurrentState(new NetworkStateListener() {
@@ -135,45 +134,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startCaptiveLogin() {
-
-        final ProgressDialog pd = new ProgressDialog(mContext);
-        pd.setMessage("Initiating automatic login");
-        pd.setCancelable(false);
-        pd.show();
-
-        wiFire.startAutomaticLogin(this, new AutomaticLoginStartListener() {
-            @Override
-            public void onStart() {
-                Log.d(TAG, "Started captive login");
-                pd.dismiss();
-            }
-
+        wiFire.startAutomaticLogin(this, new WiFireErrorListener() {
             @Override
             public void onError(WiFireException e) {
-                pd.dismiss();
-                String error = "Captive login failed. ";
-                switch (e.getMessage()) {
-
-                    case WiFire.CAPTIVE_LOGIN_ERROR_HAS_INTERNET_ACCESS:
-                        error = error + "You already have internet access";
-                        break;
-
-                    case WiFire.CAPTIVE_LOGIN_ERROR_NO_RESPONSE:
-                        error = error + "Network not responding. Please try later";
-                        break;
-
-                    case WiFire.CAPTIVE_LOGIN_ERROR_NO_WIFI:
-                        error = error + "WiFi disconnected. Try connecting again";
-                        break;
-
-                    case WiFire.CAPTIVE_LOGIN_ERROR_USER_NOT_SET:
-                        askUserDetails();
-                        break;
-
-                    default:
-                        error = error + e.getMessage();
-                        break;
-                }
+                if (e.getErrorCode() == ErrorCodes.USER_NOT_SET)
+                    askUserDetails();
+                String error = e.getMessage();
                 com.mobstac.wifire.sdksample.utils.Util.snackBar(error, (Activity) mContext, null);
             }
         });
@@ -197,13 +163,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void startSyncing() {
         if (wiFire != null) {
-            try {
-                wiFire.enableSync();
-            } catch (WiFireException e) {
-                Util.snackBar(e.getMessage(), this, null);
-                if (errorText != null)
-                    errorText.setText(e.getMessage());
-            }
+
+            wiFire.enableSync(new WiFireErrorListener() {
+                @Override
+                public void onError(WiFireException e) {
+                    Util.snackBar(e.getMessage(), (Activity) mContext, null);
+                    if (errorText != null)
+                        errorText.setText(e.getMessage());
+                }
+            });
         }
     }
 
@@ -226,39 +194,45 @@ public class MainActivity extends AppCompatActivity {
                 pd.dismiss();
                 String error = "Connection failed";
 
-                switch (wiFireException.getMessage()) {
+                switch (wiFireException.getErrorCode()) {
 
-                    case WiFire.ERROR_ASSOCIATION_REJECT:
+                    case ErrorCodes.USER_NOT_SET:
+                        //Must provide user's phone number to comply with TRAI regulations
+                        askUserDetails();
+                        break;
+
+                    case ErrorCodes.WIFI_DISABLED_ASSOCIATION_REJECT:
                         //Rejected by the system
                         error = "Rejected by the system";
                         break;
 
-                    case WiFire.ERROR_CONNECTION_FAILED:
+                    case ErrorCodes.WIFI_DISABLED_UNKNOWN_REASON:
+                    case ErrorCodes.UNKNOWN_ERROR:
                         //Connection failed
                         error = "Connection failed";
                         break;
 
-                    case WiFire.ERROR_DHCP_FAILED:
+                    case ErrorCodes.WIFI_DISABLED_DHCP_FAILURE:
                         //DHCP failed
                         error = "DHCP failed";
                         break;
 
-                    case WiFire.ERROR_DNS_FAILED:
+                    case ErrorCodes.WIFI_DISABLED_DNS_FAILURE:
                         //DNS failed
                         error = "DNS failed";
                         break;
 
-                    case WiFire.ERROR_INCORRECT_PASSWORD:
+                    case ErrorCodes.WIFI_DISABLED_AUTH_FAILURE:
                         //Password failed
                         error = "Wrong password";
                         break;
 
-                    case WiFire.ERROR_WEAK_SIGNAL:
+                    case ErrorCodes.WIFI_DISABLED_LOW_SIGNAL:
                         //Signal weak
                         error = "Signal too weak to connect";
                         break;
 
-                    case WiFire.ERROR_DISABLED_BY_SYSTEM:
+                    case ErrorCodes.WIFI_DISABLED_BY_WIFI_MANAGER:
                         //Disabled by system's WiFiManager
                         error = "Network disabled by system";
                         break;

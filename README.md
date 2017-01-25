@@ -9,7 +9,7 @@ You will need an API key for the WiFire SDK service to work. Please email wifire
 ```groovy
 dependencies {
     ...
-    compile 'com.mobstac.wifire:WifireSDK:0.9.5'
+    compile 'com.mobstac.wifire:WifireSDK:0.9.6'
 }
 ```
 
@@ -51,8 +51,23 @@ WiFire wiFire = WiFire.getInstance();
 public void onResume() {
     super.onResume();
     if (wiFire != null) 
-    	wiFire.enableSync();
+    	wiFire.enableSync(new WiFireErrorListener() {
+                @Override
+                public void onError(WiFireException e) {
+                    Log.e("WiFireSDK", e.getMessage());
+                }
+            });
 }
+
+
+//To sync within a required radius, pass an argument which is the radius in metres
+wiFire.enableSync(1000, new WiFireErrorListener() {
+    @Override
+    public void onError(WiFireException e) {
+        Log.e("WiFireSDK", e.getMessage());
+    }
+});
+
 
 //Stopping sync
 @Override
@@ -138,12 +153,7 @@ Set-up the `intent filter` for it like this
 #### 7. Starting automatic network login
 
 ```java
-wiFire.startAutomaticLogin(this, new AutomaticLoginStartListener() {
-    @Override
-    public void onStart() {
-        Log.d("WiFire", "Started captive login");
-    }
-
+wiFire.startAutomaticLogin(this, new WiFireErrorListener() {
     @Override
     public void onError(WiFireException e) {
         Log.d("WiFire", e.getMessage());
