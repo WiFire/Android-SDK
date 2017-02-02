@@ -226,4 +226,4 @@ WiFire.getInstance().setUserDetails(countryCode, phoneNumber, emailID, name);
 ```
 
 You will need to set the user's details in the SDK before connecting to a network.
-Email ID and name fields are optional, but some providers need it before they give you internet access.
+Email ID and name fields are optional, but some providers require those fields to be filled out before they give you Internet access.
