@@ -1,4 +1,4 @@
-# WiFire SDK for Android. Allows apps to embed WiFire functionality - see www.getwifireapp.com
+# WiFire SDK for Android. Allows apps to embed WiFire functionality
 
 You will need an API key for the WiFire SDK service to work. Please email wifire.bizdev@mobstac.com to get an API key.
 
@@ -234,4 +234,4 @@ WiFire.getInstance().setUserDetails(countryCode, phoneNumber, emailID, name);
 ```
 
 You will need to set the user's details in the SDK before connecting to a network.
-Email ID and name fields are optional, but some providers need it before they give you internet access.
+Email ID and name fields are optional, but some providers require those fields to be filled out before they give you Internet access.
