@@ -9,7 +9,7 @@ You will need an API key for the WiFire SDK service to work. Please email wifire
 ```groovy
 dependencies {
     ...
-    compile 'com.mobstac.wifire:WifireSDK:0.9.6'
+    compile 'com.mobstac.wifire:WifireSDK:0.9.7'
 }
 ```
 
@@ -116,10 +116,10 @@ wiFire.connectToNetwork(hotspot, new ConnectionListener() {
 
 #### 6. Listening to WiFi network updates
 
-To listen to WiFi connection/state changes you can create a `BroadcastReceiver` which extends `com.mobstac.wifire.receivers.WiFiStateReceiver`
+To listen to WiFi connection/state changes you can create a `BroadcastReceiver` which extends `com.mobstac.wifire.receivers.WiFireReceiver`
 
 ```java
-public class WiFireStateReceiver extends WiFiStateReceiver {
+public class MyWiFireReceiver extends WiFireReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -133,7 +133,12 @@ public class WiFireStateReceiver extends WiFiStateReceiver {
 
     @Override
     public void onCaptivePortalConnected(WiFiState wiFiState) {
-        //Show a notification for network login here
+        //Show notification for network login here
+    }
+
+    @Override
+    public void onWiFiNetworkInRange(ArrayList<WiFireHotspot> wiFireHotspots) {
+        //Show notification for WiFi availability here
     }
 }
 ```
@@ -142,10 +147,13 @@ Set-up the `intent filter` for it like this
 
 ```xml
 <receiver
-    android:name=".my.package.WiFireStateReceiver"
+    android:name=".my.package.MyWiFireReceiver"
     android:enabled="true">
     <intent-filter>
+        <!--For listening to changes in WiFi state-->
         <action android:name="com.mobstac.wifire.WIFI_STATE_CHANGE" />
+        <!--For listening to WiFi networks in range-->
+        <action android:name="com.mobstac.wifire.WIFI_IN_RANGE" />
     </intent-filter>
 </receiver>
 ```

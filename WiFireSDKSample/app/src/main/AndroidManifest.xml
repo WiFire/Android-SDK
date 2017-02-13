@@ -26,7 +26,7 @@
         </activity>
 
         <receiver
-            android:name=".receivers.WiFireStateReceiver"
+            android:name=".receivers.MyWiFireReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

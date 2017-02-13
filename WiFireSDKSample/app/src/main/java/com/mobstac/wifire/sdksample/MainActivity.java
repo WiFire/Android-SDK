@@ -30,7 +30,7 @@ import com.mobstac.wifire.interfaces.NetworkStateListener;
 import com.mobstac.wifire.interfaces.WiFireErrorListener;
 import com.mobstac.wifire.sdksample.adapters.WiFireAdapter;
 import com.mobstac.wifire.sdksample.dialogFragments.UserDetailsDialog;
-import com.mobstac.wifire.sdksample.receivers.WiFireStateReceiver;
+import com.mobstac.wifire.sdksample.receivers.MyWiFireReceiver;
 import com.mobstac.wifire.sdksample.utils.Util;
 
 import java.util.ArrayList;
@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         startSyncing();
-        registerReceiver(captiveReceiver, new IntentFilter(WiFireStateReceiver.BROADCAST_CAPTIVE_NETWORK));
+        registerReceiver(captiveReceiver, new IntentFilter(MyWiFireReceiver.BROADCAST_CAPTIVE_NETWORK));
     }
 
     private void startSyncing() {

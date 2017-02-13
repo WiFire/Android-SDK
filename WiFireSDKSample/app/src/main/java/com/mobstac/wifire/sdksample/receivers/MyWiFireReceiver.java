@@ -7,16 +7,19 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.mobstac.wifire.WiFireHotspot;
 import com.mobstac.wifire.enums.WiFiState;
-import com.mobstac.wifire.receivers.WiFiStateReceiver;
+import com.mobstac.wifire.receivers.WiFireReceiver;
 import com.mobstac.wifire.sdksample.MainActivity;
 import com.mobstac.wifire.sdksample.R;
 
-public class WiFireStateReceiver extends WiFiStateReceiver {
+import java.util.ArrayList;
+
+public class MyWiFireReceiver extends WiFireReceiver {
 
     public static final String BROADCAST_CAPTIVE_NETWORK = "connected_to_captive";
 
-    public WiFireStateReceiver() {
+    public MyWiFireReceiver() {
         //Default constructor
     }
 
@@ -32,18 +35,23 @@ public class WiFireStateReceiver extends WiFiStateReceiver {
 
     @Override
     public void onWiFiStateChange(WiFiState wiFiState) {
-        Log.d("WiFireStateReceiver", wiFiState.name());
+        Log.d("MyWiFireReceiver", wiFiState.name());
         if (mContext != null && wiFiState != WiFiState.WIFI_CAPTIVE_PORTAL) {
             cancelNotification(mContext);
         }
     }
 
     @Override
-    public void onCaptivePortalConnected(WiFiState wiFiState) {
+    public void onCaptivePortalConnected() {
         if (mContext != null) {
             showNotification(mContext);
             mContext.sendBroadcast(new Intent(BROADCAST_CAPTIVE_NETWORK));
         }
+    }
+
+    @Override
+    public void onWiFiNetworkInRange(ArrayList<WiFireHotspot> arrayList) {
+        //TODO: Notify the user about wifi availability
     }
 
     private void showNotification(Context context) {
