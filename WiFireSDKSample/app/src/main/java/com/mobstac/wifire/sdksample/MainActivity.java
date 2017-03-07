@@ -267,8 +267,15 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == WiFire.CAPTIVE_LOGIN_REQUEST) {
             if (responseCode == WiFire.CAPTIVE_LOGIN_SUCCESS) {
                 Util.snackBar("Login successful", (Activity) mContext, null);
-            } else {
+            } else if (responseCode == WiFire.CAPTIVE_LOGIN_FAILED) {
                 Util.snackBar("Login failed", (Activity) mContext, null);
+            } else if (responseCode == WiFire.CAPTIVE_LOGIN_CANCELLED) {
+                String reason = data.getStringExtra("reason");
+                if (reason == null)
+                    reason = "Login cancelled";
+                Util.snackBar(reason, (Activity) mContext, null);
+            } else {
+                Util.snackBar("Something went wrong", (Activity) mContext, null);
             }
         }
     }

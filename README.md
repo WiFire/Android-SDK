@@ -9,7 +9,7 @@ You will need an API key for the WiFire SDK service to work. Please email wifire
 ```groovy
 dependencies {
     ...
-    compile 'com.mobstac.wifire:WifireSDK:0.9.7'
+    compile 'com.mobstac.wifire:WifireSDK:0.9.8'
 }
 ```
 
@@ -116,7 +116,7 @@ wiFire.connectToNetwork(hotspot, new ConnectionListener() {
 
 #### 6. Listening to WiFi network updates
 
-To listen to WiFi connection/state changes you can create a `BroadcastReceiver` which extends `com.mobstac.wifire.receivers.WiFireReceiver`
+To listen to WiFi connection/state changes you can create a `BroadcastReceiver` which extends `com.mobstac.wifire.WiFireReceiver`
 
 ```java
 public class MyWiFireReceiver extends WiFireReceiver {
@@ -179,8 +179,13 @@ public void onActivityResult(int requestCode, int responseCode, Intent data) {
     if (requestCode == WiFire.CAPTIVE_LOGIN_REQUEST) {
         if (responseCode == WiFire.CAPTIVE_LOGIN_SUCCESS) {
             Log.d("WiFire", "Login successful");
-        } else {
+        } else if (responseCode == WiFire.CAPTIVE_LOGIN_FAILED) {
             Log.d("WiFire", "Login failed");
+        } else if (responseCode == WiFire.CAPTIVE_LOGIN_CANCELLED) {
+            String reason = data.getStringExtra("reason");
+            if (reason == null)
+                reason = "Login cancelled";
+            Log.d("WiFire", reason);
         }
     }
 }

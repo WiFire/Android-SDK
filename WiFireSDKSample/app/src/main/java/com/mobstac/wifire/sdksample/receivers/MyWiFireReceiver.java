@@ -8,8 +8,8 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.mobstac.wifire.WiFireHotspot;
+import com.mobstac.wifire.WiFireReceiver;
 import com.mobstac.wifire.enums.WiFiState;
-import com.mobstac.wifire.receivers.WiFireReceiver;
 import com.mobstac.wifire.sdksample.MainActivity;
 import com.mobstac.wifire.sdksample.R;
 

@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.mobstac.wifire.WiFireHotspot;
 import com.mobstac.wifire.sdksample.MainActivity;
 import com.mobstac.wifire.sdksample.R;
+import com.mobstac.wifire.sdksample.utils.Util;
 
 import java.util.ArrayList;
 
@@ -42,7 +43,7 @@ public class WiFireAdapter extends RecyclerView.Adapter<WiFireAdapter.ViewHolder
         holder.name.setText(hotspot.getName());
         holder.extraInfo.setVisibility(View.VISIBLE);
         holder.extraInfo.setText(hotspot.getSsid());
-        holder.icon.setImageResource(hotspot.getWiFireIcon());
+        holder.icon.setImageResource(Util.getWifireSignalIcon(hotspot.getSignalLevel(4)));
     }
 
     @Override
