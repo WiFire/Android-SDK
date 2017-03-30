@@ -13,6 +13,7 @@ import com.mobstac.wifire.sdksample.MainActivity;
 import com.mobstac.wifire.sdksample.R;
 import com.mobstac.wifire.sdksample.utils.Util;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
@@ -38,11 +39,17 @@ public class WiFireAdapter extends RecyclerView.Adapter<WiFireAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-
         WiFireHotspot hotspot = mDataSet.get(position);
-        holder.name.setText(hotspot.getName());
-        holder.extraInfo.setVisibility(View.VISIBLE);
-        holder.extraInfo.setText(hotspot.getSsid());
+        DecimalFormat sf = new DecimalFormat("#.0");
+        String rating = sf.format(hotspot.getRating());
+        if (hotspot.getName() != null) {
+            holder.name.setText(hotspot.getName());
+            holder.extraInfo.setVisibility(View.VISIBLE);
+            holder.extraInfo.setText(hotspot.getSsid() + " (" + rating + "\u2605" + ")");
+        } else {
+            holder.name.setText(hotspot.getSsid() + " (" + rating + "\u2605" + ")");
+            holder.extraInfo.setVisibility(View.GONE);
+        }
         holder.icon.setImageResource(Util.getWifireSignalIcon(hotspot.getSignalLevel(4)));
     }
 

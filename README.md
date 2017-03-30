@@ -240,3 +240,29 @@ WiFire.getInstance().setUserDetails(countryCode, phoneNumber, emailID, name);
 
 You will need to set the user's details in the SDK before connecting to a network.
 Email ID and name fields are optional, but some providers require those fields to be filled out before they give you Internet access.
+
+
+
+## Permissions
+#### WiFire requires following permissions.
+```xml
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+```
+It is not necessary to explicitly add these permissions to your app. They will be added automatically when you include the SDK
+
+### Runtime permissions
+Since Android 6.0 android has introduced the concept of runtime permissions. WiFire SDK requires two runtime permissions - 
+
+#### Location
+WiFire requires the location permission to sync nearby Hotspots. WiFire SDKs `enableSync()` method will fail if location permission is denied.
+
+#### SMS read/receive
+WiFire requires the SMS permission to read SMS messages and extract the `one time password (OTP)` for logging in to a captive network. WiFire SDKs `startAutomaticLogin()` method will fail if SMS permission is not granted
+

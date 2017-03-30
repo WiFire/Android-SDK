@@ -1,12 +1,16 @@
 package com.mobstac.wifire.sdksample;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -41,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "WiFireSample";
 
     private static final String API_KEY = "YOUR_API_KEY";
+    public static final int REQUEST_LOCATION_PERMISSION = 864;
+    public static final int REQUEST_SMS_PERMISSION = 865;
 
     WiFire wiFire;
     Context mContext;
@@ -75,7 +81,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(WiFireException e) {
                 Util.snackBar(e.getMessage(), MainActivity.this, null);
+                errorText.setVisibility(View.VISIBLE);
                 errorText.setText(e.getMessage());
+                errorText.setOnClickListener(null);
             }
         });
 
@@ -89,7 +97,9 @@ public class MainActivity extends AppCompatActivity {
                 if (wiFireHotSpots.size() > 0) {
                     errorText.setVisibility(View.GONE);
                 } else {
+                    errorText.setText(R.string.no_network_in_range);
                     errorText.setVisibility(View.VISIBLE);
+                    errorText.setOnClickListener(null);
                 }
             }
         });
@@ -139,8 +149,17 @@ public class MainActivity extends AppCompatActivity {
             public void onError(WiFireException e) {
                 if (e.getErrorCode() == ErrorCodes.USER_NOT_SET)
                     askUserDetails();
+                else if (e.getErrorCode() == ErrorCodes.SMS_PERMISSION_DENIED) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        requestPermissions(
+                                new String[]{
+                                        Manifest.permission.READ_SMS,
+                                        Manifest.permission.RECEIVE_SMS
+                                }, REQUEST_SMS_PERMISSION);
+                    }
+                }
                 String error = e.getMessage();
-                com.mobstac.wifire.sdksample.utils.Util.snackBar(error, (Activity) mContext, null);
+                Util.snackBar(error, (Activity) mContext, null);
             }
         });
     }
@@ -163,13 +182,31 @@ public class MainActivity extends AppCompatActivity {
 
     private void startSyncing() {
         if (wiFire != null) {
-
             wiFire.enableSync(new WiFireErrorListener() {
                 @Override
                 public void onError(WiFireException e) {
+                    errorText.setVisibility(View.VISIBLE);
                     Util.snackBar(e.getMessage(), (Activity) mContext, null);
                     if (errorText != null)
                         errorText.setText(e.getMessage());
+                    if (e.getErrorCode() == ErrorCodes.LOCATION_PERMISSION_DENIED) {
+                        //Location permission denied, ask for permission
+                        errorText.append(". Tap here to grant location permission");
+                        errorText.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                    requestPermissions(
+                                            new String[]{
+                                                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                                                    Manifest.permission.ACCESS_FINE_LOCATION
+                                            }, REQUEST_LOCATION_PERMISSION);
+                                }
+                            }
+                        });
+                    } else {
+                        errorText.setOnClickListener(null);
+                    }
                 }
             });
         }
@@ -307,4 +344,46 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            int permissionsGranted = 0;
+            for (int i = 0; i < grantResults.length; i++) {
+                String permission = permissions[i];
+                int grantResult = grantResults[i];
+                if (permission.equals(Manifest.permission.ACCESS_COARSE_LOCATION)
+                        && grantResult == PackageManager.PERMISSION_GRANTED) {
+                    permissionsGranted++;
+                } else if (permission.equals(Manifest.permission.ACCESS_FINE_LOCATION)
+                        && grantResult == PackageManager.PERMISSION_GRANTED) {
+                    permissionsGranted++;
+                }
+            }
+            if (permissionsGranted == 2) {
+                startSyncing();
+            } else {
+                Util.snackBar("Location permission is needed to enable sync", this, null);
+            }
+        } else if (requestCode == REQUEST_SMS_PERMISSION) {
+            int permissionsGranted = 0;
+            for (int i = 0; i < grantResults.length; i++) {
+                String permission = permissions[i];
+                int grantResult = grantResults[i];
+                if (permission.equals(Manifest.permission.READ_SMS)
+                        && grantResult == PackageManager.PERMISSION_GRANTED) {
+                    permissionsGranted++;
+                } else if (permission.equals(Manifest.permission.RECEIVE_SMS)
+                        && grantResult == PackageManager.PERMISSION_GRANTED) {
+                    permissionsGranted++;
+                }
+            }
+            if (permissionsGranted == 2) {
+                startCaptiveLogin();
+            } else {
+                Util.snackBar("SMS permission is required for captive login", this, null);
+            }
+        }
+    }
 }

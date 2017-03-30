@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">WiFire SDK</string>
+    <string name="no_network_in_range">No WiFire networks in range</string>
 </resources>

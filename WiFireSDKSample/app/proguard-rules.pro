@@ -15,3 +15,9 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+# Amazon AWS
+-keep class com.amazonaws.** { *; }
+-dontwarn com.fasterxml.jackson.**
+
+-keep class com.mobstac.wifire.** { *; }
