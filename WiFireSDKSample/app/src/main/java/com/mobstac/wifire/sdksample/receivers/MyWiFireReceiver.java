@@ -44,17 +44,28 @@ public class MyWiFireReceiver extends WiFireReceiver {
     @Override
     public void onCaptivePortalConnected() {
         if (mContext != null) {
-            showNotification(mContext);
+            showNotification(mContext, mContext.getString(R.string.app_name), "Login to this network");
             mContext.sendBroadcast(new Intent(BROADCAST_CAPTIVE_NETWORK));
         }
     }
 
     @Override
-    public void onWiFiNetworkInRange(ArrayList<WiFireHotspot> arrayList) {
-        //TODO: Notify the user about wifi availability
+    public void onWiFiNetworkInRange(ArrayList<WiFireHotspot> wiFireHotspots) {
+        if (mContext != null) {
+            String title = mContext.getResources().getQuantityString(R.plurals.networks_in_range,
+                    wiFireHotspots.size(), wiFireHotspots.size());
+            StringBuilder subtitle = new StringBuilder();
+            for (WiFireHotspot wiFireHotspot : wiFireHotspots) {
+                if (subtitle.toString().length() > 1) {
+                    subtitle.append(", ");
+                }
+                subtitle.append(wiFireHotspot.getSsid());
+            }
+            showNotification(mContext, title, subtitle.toString());
+        }
     }
 
-    private void showNotification(Context context) {
+    private void showNotification(Context context, String title, String subTitle) {
 
         Intent intent = new Intent(context, MainActivity.class);
         intent.putExtra("wifireNotificationClicked", true);
@@ -71,8 +82,8 @@ public class MyWiFireReceiver extends WiFireReceiver {
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setContentIntent(pIntent)
                         .setAutoCancel(true)
-                        .setContentTitle(context.getString(R.string.app_name))
-                        .setContentText("Login to this network");
+                        .setContentTitle(title)
+                        .setContentText(subTitle);
 
         NotificationManager mNotifyMgr =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

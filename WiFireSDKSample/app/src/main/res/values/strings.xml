@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">WiFire SDK</string>
     <string name="no_network_in_range">No WiFire networks in range</string>
+    <plurals name="networks_in_range">
+        <item quantity="one">%1$s public network available</item>
+        <item quantity="other">%1$s public networks available</item>
+    </plurals>
 </resources>
