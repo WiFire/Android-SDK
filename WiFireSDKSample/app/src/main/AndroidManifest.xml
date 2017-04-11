@@ -31,6 +31,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="com.mobstac.wifire.WIFI_STATE_CHANGE" />
+                <action android:name="com.mobstac.wifire.WIFI_IN_RANGE" />
             </intent-filter>
         </receiver>
 

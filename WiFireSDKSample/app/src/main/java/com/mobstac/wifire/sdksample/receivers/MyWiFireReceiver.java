@@ -23,9 +23,10 @@ public class MyWiFireReceiver extends WiFireReceiver {
         //Default constructor
     }
 
-    Context mContext;
+    final int wifiNotificationId = 1234;
+    final int captiveNotificationId = 1235;
 
-    final int mNotificationId = 1234;
+    Context mContext;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -36,36 +37,50 @@ public class MyWiFireReceiver extends WiFireReceiver {
     @Override
     public void onWiFiStateChange(WiFiState wiFiState) {
         Log.d("MyWiFireReceiver", wiFiState.name());
+        //Not connected to a captive portal anymore, clear login notification
         if (mContext != null && wiFiState != WiFiState.WIFI_CAPTIVE_PORTAL) {
-            cancelNotification(mContext);
+            cancelNotification(mContext, captiveNotificationId);
         }
     }
 
     @Override
     public void onCaptivePortalConnected() {
         if (mContext != null) {
-            showNotification(mContext, mContext.getString(R.string.app_name), "Login to this network");
+            showNotification(mContext, mContext.getString(R.string.app_name), "Login to this network", captiveNotificationId);
             mContext.sendBroadcast(new Intent(BROADCAST_CAPTIVE_NETWORK));
         }
     }
 
     @Override
     public void onWiFiNetworkInRange(ArrayList<WiFireHotspot> wiFireHotspots) {
+        Log.d("MyWiFireReceiver", "Networks in range");
         if (mContext != null) {
-            String title = mContext.getResources().getQuantityString(R.plurals.networks_in_range,
-                    wiFireHotspots.size(), wiFireHotspots.size());
-            StringBuilder subtitle = new StringBuilder();
-            for (WiFireHotspot wiFireHotspot : wiFireHotspots) {
-                if (subtitle.toString().length() > 1) {
-                    subtitle.append(", ");
+            if (wiFireHotspots.size() > 0) {
+                //WiFi in range, show notification
+                String title = mContext.getResources().getQuantityString(R.plurals.networks_in_range,
+                        wiFireHotspots.size(), wiFireHotspots.size());
+                StringBuilder subtitle = new StringBuilder();
+                for (WiFireHotspot wiFireHotspot : wiFireHotspots) {
+                    if (subtitle.toString().length() > 1) {
+                        subtitle.append(", ");
+                    }
+                    subtitle.append(wiFireHotspot.getSsid());
                 }
-                subtitle.append(wiFireHotspot.getSsid());
+                showNotification(mContext, title, subtitle.toString(), wifiNotificationId);
+            } else {
+                //WiFi went out of range, clear notification
+                cancelNotification(mContext, wifiNotificationId);
             }
-            showNotification(mContext, title, subtitle.toString());
         }
     }
 
-    private void showNotification(Context context, String title, String subTitle) {
+    /**
+     * Display a notification to the user
+     *
+     * @param context        Application context
+     * @param notificationId A unique id which can be used to clear the notification
+     */
+    private void showNotification(Context context, String title, String subTitle, int notificationId) {
 
         Intent intent = new Intent(context, MainActivity.class);
         intent.putExtra("wifireNotificationClicked", true);
@@ -87,14 +102,22 @@ public class MyWiFireReceiver extends WiFireReceiver {
 
         NotificationManager mNotifyMgr =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+        mNotifyMgr.notify(notificationId, mBuilder.build());
 
     }
 
-    private void cancelNotification(Context context) {
+    /**
+     * Cancel the previously displayed login notification, ideal when the device
+     * gets disconnected from the WiFi or login is complete
+     *
+     * @param context        Application context
+     * @param notificationId The unique id used to create the notification
+     */
+    private void cancelNotification(Context context, int notificationId) {
         NotificationManager mNotifyMgr =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotifyMgr.cancel(mNotificationId);
+        mNotifyMgr.cancel(notificationId);
     }
+
 
 }

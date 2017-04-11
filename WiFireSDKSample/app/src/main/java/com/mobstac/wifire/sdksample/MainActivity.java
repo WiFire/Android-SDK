@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +36,7 @@ import com.mobstac.wifire.interfaces.WiFireErrorListener;
 import com.mobstac.wifire.sdksample.adapters.WiFireAdapter;
 import com.mobstac.wifire.sdksample.dialogFragments.UserDetailsDialog;
 import com.mobstac.wifire.sdksample.receivers.MyWiFireReceiver;
+import com.mobstac.wifire.sdksample.utils.ApiKey;
 import com.mobstac.wifire.sdksample.utils.Util;
 
 import java.util.ArrayList;
@@ -44,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "WiFireSample";
 
-    private static final String API_KEY = "YOUR_API_KEY";
     public static final int REQUEST_LOCATION_PERMISSION = 864;
     public static final int REQUEST_SMS_PERMISSION = 865;
 
@@ -54,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView.LayoutManager layoutManager;
     WiFireAdapter mAdapter;
     TextView errorText;
-
     Snackbar snackbar;
 
     @Override
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         wiFireList.setLayoutManager(layoutManager);
         errorText = (TextView) findViewById(R.id.error_text);
 
-        WiFire.initialise(getApplicationContext(), API_KEY, new AuthListener() {
+        WiFire.initialise(getApplicationContext(), ApiKey.get(), new AuthListener() {
             @Override
             public void onSuccess() {
                 startSyncing();
@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 String error = e.getMessage();
-                Util.snackBar(error, (Activity) mContext, null);
+                com.mobstac.wifire.sdksample.utils.Util.snackBar(error, (Activity) mContext, null);
             }
         });
     }
@@ -222,13 +222,16 @@ public class MainActivity extends AppCompatActivity {
         wiFire.connectToNetwork(hotspot, new ConnectionListener() {
             @Override
             public void onSuccess() {
-                pd.dismiss();
+                if (pd != null && pd.isShowing())
+                    pd.dismiss();
                 Util.snackBar("Connected to " + hotspot.getName(), (Activity) mContext, null);
             }
 
             @Override
             public void onFailure(WiFireException wiFireException) {
-                pd.dismiss();
+                Log.e("WiFire", wiFireException.getMessage());
+                if (pd != null && pd.isShowing())
+                    pd.dismiss();
                 String error = "Connection failed";
 
                 switch (wiFireException.getErrorCode()) {
@@ -344,7 +347,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -386,4 +388,5 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
 }
