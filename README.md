@@ -9,7 +9,7 @@ You will need an API key for the WiFire SDK service to work. Please email wifire
 ```groovy
 dependencies {
     ...
-    compile 'com.mobstac.wifire:WifireSDK:1.0.0'
+    compile 'com.mobstac.wifire:WiFireSDK:1.0.0'
 }
 ```
 
