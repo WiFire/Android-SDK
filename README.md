@@ -37,12 +37,6 @@ It is not necessary to explicitly add these permissions to your app. They will b
 ### Optional permissions
 These permissions are optional and can be removed
 
-- READ_SMS
-- RECEIVE_SMS
- 
-    **Usage -** `Required to read the one time password (OTP) sent by the network providers to verify users.`
-    **Consequence -** `The user will have to read the SMS and manully enter the otp during captive login`
-
 - WRITE_SETTINGS
 
     **Usage -** `Required to better manage saved WiFi networks in the android system starting Android 6.0.`
