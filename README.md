@@ -9,13 +9,66 @@ You will need an API key for the WiFire SDK service to work. Please email wifire
 ```groovy
 dependencies {
     ...
-    compile 'com.mobstac.wifire:WifireSDK:0.9.9.1'
+    compile 'com.mobstac.wifire:WifireSDK:1.0.0'
 }
 ```
 
 ##### Latest version
 
 [ ![WiFireSDK](https://api.bintray.com/packages/mobstac/maven/WiFireSDK/images/download.svg) ](https://bintray.com/mobstac/maven/WiFireSDK/_latestVersion)
+
+
+## Permissions
+#### WiFire requires the following permissions.
+```xml
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+```
+
+It is not necessary to explicitly add these permissions to your app. They will be added automatically when you include the SDK
+
+### Optional permissions
+These permissions are optional and can be removed
+
+- READ_SMS
+- RECEIVE_SMS
+ 
+    **Usage -** `Required to read the one time password (OTP) sent by the network providers to verify users.`
+    **Consequence -** `The user will have to read the SMS and manully enter the otp during captive login`
+
+- WRITE_SETTINGS
+
+    **Usage -** `Required to better manage saved WiFi networks in the android system starting Android 6.0.`
+    **Consequence -** `WiFire won't be able to delete or modify a saved network on the user's device`
+
+#### How to remove
+Add this line to your `AndroidManifest.xml`
+```xml
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"
+        tools:node="remove" />
+```
+
+### Runtime permissions
+Since Android 6.0 android has introduced the concept of runtime permissions. WiFire SDK requires two runtime permissions - 
+
+#### Location
+WiFire requires the location permission to sync nearby Hotspots. WiFire SDKs `enableSync()` method will fail if location permission is denied.
+
+#### SMS read/receive
+WiFire requires the SMS permission to read SMS messages and extract the `one time password (OTP)` for logging in to a captive network. WiFire SDKs `startAutomaticLogin()` method will fail if SMS permission is not granted
+
+
+## Setup test network
+
+### [Instructions for setting up your own WiFire test network](media/TestSetup.md)
+
 
 ## Usage
 
@@ -82,7 +135,7 @@ Since syncing can be resource intensive onResume() and onPause() would be ideal 
 While sync is enabled WiFire will both perform WiFire scanning and sync WiFire hotspots in the vicinity when the user's location changes
 
 
-#### 4. Getting list of WiFire hotspots
+#### 4. Getting a list of [WiFireHotspot](media/WiFireHotspot.md) objects
 
 ```java
 wiFire.setHotSpotListener(new HotSpotListener() {
@@ -118,6 +171,15 @@ wiFire.connectToNetwork(hotspot, new ConnectionListener() {
 
 To listen to WiFi connection/state changes you can create a `BroadcastReceiver` which extends `com.mobstac.wifire.WiFireReceiver`
 
+This listener can work even when the app is in the background. *Location and sync must be enabled* for **onWiFiNetworkInRange** to work.
+
+This allows for the following functionality
+* Show notifications when a WiFi network is available for connection
+* Recognise the business establishment the user is currently at
+* Show notifications for network login, when the user connects to a captive network
+* Clear older notifications when the user leaves a place
+* Get updates about WiFi connectivity changes
+
 ```java
 public class MyWiFireReceiver extends WiFireReceiver {
 
@@ -129,16 +191,29 @@ public class MyWiFireReceiver extends WiFireReceiver {
     @Override
     public void onWiFiStateChange(WiFiState wiFiState) {
         Log.d("WiFireStateChanged", wiFiState.name());
+        //WiFi network's state has changed, possible states are 
+        //connected, disconnected, captive portal detected.
     }
 
     @Override
     public void onCaptivePortalConnected(WiFiState wiFiState) {
-        //Show notification for network login here
+        //The device has just connected to a captive portal.
+        //Show notification for network login here.
     }
 
     @Override
     public void onWiFiNetworkInRange(ArrayList<WiFireHotspot> wiFireHotspots) {
-        //Show notification for WiFi availability here
+
+        //This callback will work while WiFire sync is enabled. 
+
+        //You can show notification for WiFi availability here. 
+
+        //This will also have the business name so you can detect where the user is.
+
+        //You will receiver this callback only once for a fixed set of WiFi networks.
+
+        //When there are no networks in range, you will receive this callback once 
+        //with an empty list to help clear any connectivity/business related notifications.
     }
 }
 ```
@@ -240,29 +315,4 @@ WiFire.getInstance().setUserDetails(countryCode, phoneNumber, emailID, name);
 
 You will need to set the user's details in the SDK before connecting to a network.
 Email ID and name fields are optional, but some providers require those fields to be filled out before they give you Internet access.
-
-
-
-## Permissions
-#### WiFire requires following permissions.
-```xml
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.READ_SMS" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
-```
-It is not necessary to explicitly add these permissions to your app. They will be added automatically when you include the SDK
-
-### Runtime permissions
-Since Android 6.0 android has introduced the concept of runtime permissions. WiFire SDK requires two runtime permissions - 
-
-#### Location
-WiFire requires the location permission to sync nearby Hotspots. WiFire SDKs `enableSync()` method will fail if location permission is denied.
-
-#### SMS read/receive
-WiFire requires the SMS permission to read SMS messages and extract the `one time password (OTP)` for logging in to a captive network. WiFire SDKs `startAutomaticLogin()` method will fail if SMS permission is not granted
 
