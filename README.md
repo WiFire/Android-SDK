@@ -9,7 +9,7 @@ You will need an API key for the WiFire SDK service to work. Please email wifire
 ```groovy
 dependencies {
     ...
-    compile 'com.mobstac.wifire:WiFireSDK:1.0.0'
+    compile 'com.mobstac.wifire:WiFireSDK:1.0.1'
 }
 ```
 
@@ -40,6 +40,7 @@ These permissions are optional and can be removed
 - WRITE_SETTINGS
 
     **Usage -** `Required to better manage saved WiFi networks in the android system starting Android 6.0.`
+    
     **Consequence -** `WiFire won't be able to delete or modify a saved network on the user's device`
 
 #### How to remove
