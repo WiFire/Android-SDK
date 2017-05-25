@@ -43,6 +43,14 @@ These permissions are optional and can be removed
     
     **Consequence -** `WiFire won't be able to delete or modify a saved network on the user's device`
 
+
+- READ_SMS
+- RECEIVE_SMS
+
+    **Usage -** `Required to autofill the one time password (OTP) from service provider's SMS`
+    
+    **Consequence -** `The user will have to manually fill in the OTP during the network login`
+
 #### How to remove
 Add this line to your `AndroidManifest.xml`
 ```xml
@@ -51,13 +59,13 @@ Add this line to your `AndroidManifest.xml`
 ```
 
 ### Runtime permissions
-Since Android 6.0 android has introduced the concept of runtime permissions. WiFire SDK requires two runtime permissions - 
+Since Android 6.0 Android has introduced the concept of runtime permissions. WiFire SDK requires two runtime permissions - 
 
 #### Location
 WiFire requires the location permission to sync nearby Hotspots. WiFire SDKs `enableSync()` method will fail if location permission is denied.
 
 #### SMS read/receive
-WiFire requires the SMS permission to read SMS messages and extract the `one time password (OTP)` for logging in to a captive network. WiFire SDKs `startAutomaticLogin()` method will fail if SMS permission is not granted
+WiFire requires the SMS permission to read SMS messages and extract the `one time password (OTP)` for logging in to a captive network. The user will have to manually fill in the OTP if this permission is denied.
 
 
 ## Setup test network
