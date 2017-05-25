@@ -9,7 +9,7 @@ You will need an API key for the WiFire SDK service to work. Please email wifire
 ```groovy
 dependencies {
     ...
-    compile 'com.mobstac.wifire:WiFireSDK:1.0.1'
+    compile 'com.mobstac.wifire:WiFireSDK:1.0.2'
 }
 ```
 
@@ -129,8 +129,21 @@ public void onPause() {
 Since syncing can be resource intensive onResume() and onPause() would be ideal places to enable and disable sync respectively.
 While sync is enabled WiFire will both perform WiFire scanning and sync WiFire hotspots in the vicinity when the user's location changes
 
+#### 4. Syncing in background
 
-#### 4. Getting a list of [WiFireHotspot](media/WiFireHotspot.md) objects
+WiFire can sync when the app is in the background. To achieve this you can omit the disableSync() call when the app goes to the background.
+
+To optimise battery usage for sync while in background you can use
+
+```java
+    wiFire.setPassiveScanningMode(true);
+``` 
+
+This will increase the scan cycle frequency to minimise battery usage in the background.
+
+Make sure to call `wiFire.setPassiveScanningMode(false);` when the app comes to the foreground to make sure your scan list gets updated correctly in time.
+
+#### 5. Getting a list of [WiFireHotspot](media/WiFireHotspot.md) objects
 
 ```java
 wiFire.setHotSpotListener(new HotSpotListener() {
@@ -145,7 +158,7 @@ wiFire.setHotSpotListener(new HotSpotListener() {
 WiFire will perform WiFi scans and will return a list of all the hotspots that are in range and can connect to.
 A list will be delivered every ~10 seconds.
 
-#### 5. Connecting to a network
+#### 6. Connecting to a network
 
 ```java
 wiFire.connectToNetwork(hotspot, new ConnectionListener() {
@@ -162,7 +175,7 @@ wiFire.connectToNetwork(hotspot, new ConnectionListener() {
 });
 ```
 
-#### 6. Listening to WiFi network updates
+#### 7. Listening to WiFi network updates
 
 To listen to WiFi connection/state changes you can create a `BroadcastReceiver` which extends `com.mobstac.wifire.WiFireReceiver`
 
@@ -228,7 +241,7 @@ Set-up the `intent filter` for it like this
 </receiver>
 ```
 
-#### 7. Starting automatic network login
+#### 8. Starting automatic network login
 
 ```java
 wiFire.startAutomaticLogin(this, new WiFireErrorListener() {
@@ -261,7 +274,7 @@ public void onActivityResult(int requestCode, int responseCode, Intent data) {
 }
 ```
 
-#### 8. Get current WiFi's state 
+#### 9. Get current WiFi's state 
 
 ```java
 wiFire.getCurrentState(new NetworkStateListener() {
@@ -285,7 +298,7 @@ wiFire.getCurrentState(new NetworkStateListener() {
 });
 ```
 
-#### 9. Get the SSID of the current network
+#### 10. Get the SSID of the current network
 
 ```java
 String networkName = wiFire.getCurrentNetworkName();
@@ -294,13 +307,13 @@ String networkName = wiFire.getCurrentNetworkName();
 `null` if not connected to WiFi
 
 
-#### 10. Check if the current network is a WiFire verified public network
+#### 11. Check if the current network is a WiFire verified public network
 
 ```java
 boolean verified = wiFire.isWiFireNetwork();
 ```
 
-#### 11. Setting user details
+#### 12. Setting user details
 
 As per TRAI regulations a public WiFi hotspot is supposed to collect the user's phone number
 
