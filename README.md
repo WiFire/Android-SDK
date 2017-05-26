@@ -4,12 +4,32 @@ You will need an API key for the WiFire SDK service to work. Please email wifire
 
 ## Integration with your existing project in Android Studio
 
-#### In the `build.gradle` file of the app, add the following in the dependencies section:
+### In the `build.gradle` file of the app, add the following in the dependencies section:
+
+#### - The WiFire SDK has `Google Play Services 10.2.6` pre-included. If you are also on the same version you can just include this line
 
 ```groovy
 dependencies {
     ...
     compile 'com.mobstac.wifire:WiFireSDK:1.0.2'
+}
+```
+
+#### - If you want to use a specific version of `Google Play Services`, you will need to add dependencies as following
+
+```groovy
+dependencies {
+    ...
+    def GMS_LIB_VERSION = 'YOUR_GOOGLE_PLAY_SERVICES_VERSION'
+    compile 'com.mobstac.wifire:WiFireSDK:1.0.2-SNAPSHOT@aar'
+    compile 'com.google.android.gms:play-services-analytics:' + GMS_LIB_VERSION
+    compile 'com.google.android.gms:play-services-location:' + GMS_LIB_VERSION
+    compile 'com.google.firebase:firebase-database:' + GMS_LIB_VERSION
+    compile 'com.google.firebase:firebase-auth:' + GMS_LIB_VERSION
+    compile 'com.google.firebase:firebase-storage:' + GMS_LIB_VERSION
+    compile 'com.firebase:geofire-android:2.1.1'
+    compile 'com.amazonaws:aws-android-sdk-core:2.4.2'
+    compile 'com.amazonaws:aws-android-sdk-s3:2.4.2'
 }
 ```
 
