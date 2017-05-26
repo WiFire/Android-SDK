@@ -22,7 +22,6 @@ dependencies {
 Add the following lines to proguard-rules.pro
 
 ```
-# Amazon AWS
 -keep class com.amazonaws.** { *; }
 -dontwarn com.fasterxml.jackson.**
 -keep class com.mobstac.wifire.** { *; }
