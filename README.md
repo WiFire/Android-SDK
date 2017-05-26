@@ -17,6 +17,18 @@ dependencies {
 
 [ ![WiFireSDK](https://api.bintray.com/packages/mobstac/maven/WiFireSDK/images/download.svg) ](https://bintray.com/mobstac/maven/WiFireSDK/_latestVersion)
 
+### Proguard rules
+
+Add the following lines to proguard-rules.pro
+
+```
+# Amazon AWS
+-keep class com.amazonaws.** { *; }
+-dontwarn com.fasterxml.jackson.**
+-keep class com.mobstac.wifire.** { *; }
+```
+
+
 
 ## Permissions
 #### WiFire requires the following permissions.
@@ -66,7 +78,6 @@ WiFire requires the location permission to sync nearby Hotspots. WiFire SDKs `en
 
 #### SMS read/receive
 WiFire requires the SMS permission to read SMS messages and extract the `one time password (OTP)` for logging in to a captive network. The user will have to manually fill in the OTP if this permission is denied.
-
 
 ## Setup test network
 
