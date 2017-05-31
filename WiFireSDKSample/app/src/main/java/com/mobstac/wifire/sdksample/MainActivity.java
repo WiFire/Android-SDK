@@ -104,8 +104,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        boolean notificationClicked = getIntent().getBooleanExtra("wifireNotificationClicked", false);
-        if (notificationClicked)
+        int requestCode = getIntent().getIntExtra("requestCode", -1);
+        if (requestCode == MyWiFireReceiver.REQUEST_CAPTIVE_LOGIN)
             startCaptiveLogin();
 
         snackbar = Snackbar.make(wiFireList, "This network requires a login", Snackbar.LENGTH_INDEFINITE)

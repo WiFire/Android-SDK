@@ -26,6 +26,9 @@ public class MyWiFireReceiver extends WiFireReceiver {
     final int wifiNotificationId = 1234;
     final int captiveNotificationId = 1235;
 
+    public static final int REQUEST_WIFI_AVAILABLE = 34;
+    public static final int REQUEST_CAPTIVE_LOGIN = 35;
+
     Context mContext;
 
     @Override
@@ -46,7 +49,8 @@ public class MyWiFireReceiver extends WiFireReceiver {
     @Override
     public void onCaptivePortalConnected() {
         if (mContext != null) {
-            showNotification(mContext, mContext.getString(R.string.app_name), "Login to this network", captiveNotificationId);
+            showNotification(mContext, mContext.getString(R.string.app_name), "Login to this network", captiveNotificationId,
+                    REQUEST_CAPTIVE_LOGIN);
             mContext.sendBroadcast(new Intent(BROADCAST_CAPTIVE_NETWORK));
         }
     }
@@ -66,7 +70,8 @@ public class MyWiFireReceiver extends WiFireReceiver {
                     }
                     subtitle.append(wiFireHotspot.getSsid());
                 }
-                showNotification(mContext, title, subtitle.toString(), wifiNotificationId);
+                showNotification(mContext, title, subtitle.toString(), wifiNotificationId,
+                        REQUEST_WIFI_AVAILABLE);
             } else {
                 //WiFi went out of range, clear notification
                 cancelNotification(mContext, wifiNotificationId);
@@ -80,10 +85,11 @@ public class MyWiFireReceiver extends WiFireReceiver {
      * @param context        Application context
      * @param notificationId A unique id which can be used to clear the notification
      */
-    private void showNotification(Context context, String title, String subTitle, int notificationId) {
+    private void showNotification(Context context, String title, String subTitle,
+                                  int notificationId, int requestCode) {
 
         Intent intent = new Intent(context, MainActivity.class);
-        intent.putExtra("wifireNotificationClicked", true);
+        intent.putExtra("requestCode", requestCode);
         // use System.currentTimeMillis() to have a unique ID for the pending intent
         PendingIntent pIntent = PendingIntent.getActivity(
                 context,
