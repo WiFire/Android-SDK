@@ -177,7 +177,7 @@ To optimise battery usage for sync while in background you can use
     wiFire.setPassiveScanningMode(true);
 ``` 
 
-This will increase the scan cycle frequency to minimise battery usage in the background.
+This will decrease the scan cycle frequency to minimise battery usage in the background.
 
 Make sure to call `wiFire.setPassiveScanningMode(false);` when the app comes to the foreground to make sure your scan list gets updated correctly in time.
 
