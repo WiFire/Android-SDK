@@ -11,7 +11,7 @@ You will need an API key for the WiFire SDK service to work. Please email wifire
 ```groovy
 dependencies {
     ...
-    compile 'com.mobstac.wifire:WiFireSDK:1.0.5'
+    compile 'com.mobstac.wifire:WiFireSDK:1.0.6'
 }
 ```
 
@@ -21,7 +21,7 @@ dependencies {
 dependencies {
     ...
     def GMS_LIB_VERSION = 'YOUR_GOOGLE_PLAY_SERVICES_VERSION'
-    compile 'com.mobstac.wifire:WiFireSDK:1.0.5@aar'
+    compile 'com.mobstac.wifire:WiFireSDK:1.0.6@aar'
     compile 'com.google.android.gms:play-services-analytics:' + GMS_LIB_VERSION
     compile 'com.google.android.gms:play-services-location:' + GMS_LIB_VERSION
     compile 'com.google.firebase:firebase-database:' + GMS_LIB_VERSION
