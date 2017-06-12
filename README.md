@@ -11,7 +11,7 @@ You will need an API key for the WiFire SDK service to work. Please email wifire
 ```groovy
 dependencies {
     ...
-    compile 'com.mobstac.wifire:WiFireSDK:1.0.7'
+    compile 'com.mobstac.wifire:WiFireSDK:1.0.8'
 }
 ```
 
@@ -21,7 +21,7 @@ dependencies {
 dependencies {
     ...
     def GMS_LIB_VERSION = 'YOUR_GOOGLE_PLAY_SERVICES_VERSION'
-    compile 'com.mobstac.wifire:WiFireSDK:1.0.7@aar'
+    compile 'com.mobstac.wifire:WiFireSDK:1.0.8@aar'
     compile 'com.google.android.gms:play-services-analytics:' + GMS_LIB_VERSION
     compile 'com.google.android.gms:play-services-location:' + GMS_LIB_VERSION
     compile 'com.google.firebase:firebase-database:' + GMS_LIB_VERSION
@@ -235,16 +235,13 @@ public class MyWiFireReceiver extends WiFireReceiver {
     }
 
     @Override
-    public void onWiFiStateChange(WiFiState wiFiState) {
+    public void onWiFiStateChange(WiFiState wiFiState, WiFireHotspot wiFireHotspot) {
         Log.d("WiFireStateChanged", wiFiState.name());
         //WiFi network's state has changed, possible states are 
         //connected, disconnected, captive portal detected.
-    }
 
-    @Override
-    public void onCaptivePortalConnected(WiFiState wiFiState) {
-        //The device has just connected to a captive portal.
-        //Show notification for network login here.
+        // WiFireHotspot object will tell you which network you are connected to.
+        // It will be null if WiFiState is NO_WIFI or if the network that you connect to is not a public WiFire network.
     }
 
     @Override

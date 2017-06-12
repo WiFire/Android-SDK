@@ -18,6 +18,7 @@ import java.util.ArrayList;
 public class MyWiFireReceiver extends WiFireReceiver {
 
     public static final String BROADCAST_CAPTIVE_NETWORK = "connected_to_captive";
+    public static final String TAG = "MyWiFireReceiver";
 
     public MyWiFireReceiver() {
         //Default constructor
@@ -38,26 +39,25 @@ public class MyWiFireReceiver extends WiFireReceiver {
     }
 
     @Override
-    public void onWiFiStateChange(WiFiState wiFiState) {
-        Log.d("MyWiFireReceiver", wiFiState.name());
+    public void onWiFiStateChange(WiFiState wiFiState, WiFireHotspot hotspot) {
+        Log.d(TAG, wiFiState.name());
         //Not connected to a captive portal anymore, clear login notification
-        if (mContext != null && wiFiState != WiFiState.WIFI_CAPTIVE_PORTAL) {
-            cancelNotification(mContext, captiveNotificationId);
-        }
-    }
-
-    @Override
-    public void onCaptivePortalConnected() {
-        if (mContext != null) {
-            showNotification(mContext, mContext.getString(R.string.app_name), "Login to this network", captiveNotificationId,
-                    REQUEST_CAPTIVE_LOGIN);
-            mContext.sendBroadcast(new Intent(BROADCAST_CAPTIVE_NETWORK));
-        }
+        if (mContext != null)
+            switch (wiFiState) {
+                case WIFI_CAPTIVE_PORTAL:
+                    showNotification(mContext, mContext.getString(R.string.app_name), "Login to this network", captiveNotificationId,
+                            REQUEST_CAPTIVE_LOGIN);
+                    mContext.sendBroadcast(new Intent(BROADCAST_CAPTIVE_NETWORK));
+                    break;
+                default:
+                    cancelNotification(mContext, captiveNotificationId);
+                    break;
+            }
     }
 
     @Override
     public void onWiFiNetworkInRange(ArrayList<WiFireHotspot> wiFireHotspots) {
-        Log.d("MyWiFireReceiver", "Networks in range");
+        Log.d(TAG, "Networks in range");
         if (mContext != null) {
             if (wiFireHotspots.size() > 0) {
                 //WiFi in range, show notification
