@@ -11,7 +11,7 @@ You will need an API key for the WiFire SDK service to work. Please email wifire
 ```groovy
 dependencies {
     ...
-    compile 'com.mobstac.wifire:WiFireSDK:1.0.8'
+    compile 'com.mobstac.wifire:WiFireSDK:1.0.9'
 }
 ```
 
@@ -21,7 +21,7 @@ dependencies {
 dependencies {
     ...
     def GMS_LIB_VERSION = 'YOUR_GOOGLE_PLAY_SERVICES_VERSION'
-    compile 'com.mobstac.wifire:WiFireSDK:1.0.8@aar'
+    compile 'com.mobstac.wifire:WiFireSDK:1.0.9@aar'
     compile 'com.google.android.gms:play-services-analytics:' + GMS_LIB_VERSION
     compile 'com.google.android.gms:play-services-location:' + GMS_LIB_VERSION
     compile 'com.google.firebase:firebase-database:' + GMS_LIB_VERSION
@@ -240,8 +240,8 @@ public class MyWiFireReceiver extends WiFireReceiver {
         //WiFi network's state has changed, possible states are 
         //connected, disconnected, captive portal detected.
 
-        // WiFireHotspot object will tell you which network you are connected to.
-        // It will be null if WiFiState is NO_WIFI or if the network that you connect to is not a public WiFire network.
+        // WiFireHotspot object will tell you which network the user is connected to.
+        // It will be null if WiFiState is NO_WIFI or if the network that the user is connected to is not a public WiFire network.
     }
 
     @Override
@@ -275,6 +275,18 @@ Set-up the `intent filter` for it like this
     </intent-filter>
 </receiver>
 ```
+
+
+WiFire SDK requires that the network stays in range for at least one minute (60 seconds) before a notification is sent to the user. This avoids spamming while the user is walking or driving.
+
+To change the delay for this notification, you can use 
+
+```java
+WiFire.getInstance().setHotspotNotificationDelay(timeInSeconds);
+```
+
+Note that this only affects the `onWiFiNetworkInRange` callback. WiFi state events will be delivered instantly.
+
 
 #### 8. Starting automatic network login
 
