@@ -277,7 +277,7 @@ Set-up the `intent filter` for it like this
 ```
 
 
-WiFire SDK requires that the network stays in range for at least one minute (60 seconds) before a notification is sent to the user. This avoids spamming while the user is walking or driving.
+WiFire SDK requires that the network stay in range for at least one minute (60 seconds) before a notification is sent to the user. This avoids spamming the user while they are walking or driving.
 
 To change the delay for this notification, you can use 
 
