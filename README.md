@@ -167,6 +167,9 @@ public void onPause() {
 Since syncing can be resource intensive onResume() and onPause() would be ideal places to enable and disable sync respectively.
 While sync is enabled WiFire will both perform WiFire scanning and sync WiFire hotspots in the vicinity when the user's location changes
 
+### Also read - [Prerequisites for WiFi scanning and syncing](media/WiFiScan.md)
+
+
 #### 4. Syncing in background
 
 WiFire can sync when the app is in the background. To achieve this you can omit the disableSync() call when the app goes to the background.
