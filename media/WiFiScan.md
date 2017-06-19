@@ -1,9 +1,9 @@
 ## Pre-requisites for WiFi scanning to work
 
 ### 1. Location
-* Location must be enbled for WiFire to scan and identify WiFi hotspots.
+* Location must be enbled for WiFire to scan and identify WiFi hotspots.<br>
 ![Location state](location_state.png)
-* Starting from Android 6.0 the user must grant runtime permission to the App
+* Starting from Android 6.0 the user must grant runtime permission to the App<br>
 ![Location permission](location_permission.png)   
 
 ### 2. WiFi State
