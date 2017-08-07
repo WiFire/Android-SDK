@@ -11,7 +11,7 @@ You will need an API key for the WiFire SDK service to work. Please email wifire
 ```groovy
 dependencies {
     ...
-    compile 'com.mobstac.wifire:WiFireSDK:1.0.13'
+    compile 'com.mobstac.wifire:WiFireSDK:1.1'
 }
 ```
 
@@ -21,7 +21,7 @@ dependencies {
 dependencies {
     ...
     def GMS_LIB_VERSION = 'YOUR_GOOGLE_PLAY_SERVICES_VERSION'
-    compile 'com.mobstac.wifire:WiFireSDK:1.0.13@aar'
+    compile 'com.mobstac.wifire:WiFireSDK:1.1@aar'
     compile 'com.google.android.gms:play-services-analytics:' + GMS_LIB_VERSION
     compile 'com.google.android.gms:play-services-location:' + GMS_LIB_VERSION
     compile 'com.google.firebase:firebase-database:' + GMS_LIB_VERSION
@@ -202,18 +202,28 @@ A list will be delivered every ~10 seconds.
 #### 6. Connecting to a network
 
 ```java
-wiFire.connectToNetwork(hotspot, new ConnectionListener() {
-        
-    @Override
-    public void onSuccess() {
-    	Log.d("WiFire", "Connected");
-    }
+try {
+    wiFire.connectToNetwork(hotspot, new ConnectionListener() {
+        @Override
+        public void onSuccess() {
+        	Log.d("WiFire", "Connected");
+        }
 
-    @Override
-    public void onFailure(WiFireException wiFireException) {
-      	Log.d("WiFire", wiFireException.getMessage());
-    }
-});
+        @Override
+        public void onFailure(WiFireException wiFireException) {
+            Log.d("WiFire", wiFireException.getMessage());
+        }
+    });
+} catch (WiFireInitException e) {
+    Log.e("WiFire", e.getMessage());
+    // This is to catch errors which can stop WiFi connection from initiating or completing
+    // Possible errors
+    // - User details have not been provided
+    // - Another connection in progress
+    // - An OEM level permission manager is blocking WiFi access
+    // - Invalid hotspot, if a null WiFireHotspot object was passed
+    // - Hotspot is out of range
+}
 ```
 
 #### 7. Listening to WiFi network updates
@@ -294,12 +304,14 @@ Note that this only affects the `onWiFiNetworkInRange` callback. WiFi state even
 #### 8. Starting automatic network login
 
 ```java
-wiFire.startAutomaticLogin(this, new WiFireErrorListener() {
-    @Override
-    public void onError(WiFireException e) {
-        Log.d("WiFire", e.getMessage());
-    }
-});
+try {
+    wiFire.startAutomaticLogin(this);
+} catch (WiFireInitException e) {
+    Log.e("WiFire", e.getMessage());
+    // This is to catch errors which can stop automatic login from starting. Possible errors are 
+    // - User details have not been provided
+    // - Not connected to WiFi
+}
 ```
 
 This will launch an activity which will take care of the login flow.
@@ -313,12 +325,17 @@ public void onActivityResult(int requestCode, int responseCode, Intent data) {
         if (responseCode == WiFire.CAPTIVE_LOGIN_SUCCESS) {
             Log.d("WiFire", "Login successful");
         } else if (responseCode == WiFire.CAPTIVE_LOGIN_FAILED) {
-            Log.d("WiFire", "Login failed");
+            Log.e("WiFire", "Login failed");
         } else if (responseCode == WiFire.CAPTIVE_LOGIN_CANCELLED) {
             String reason = data.getStringExtra("reason");
             if (reason == null)
                 reason = "Login cancelled";
-            Log.d("WiFire", reason);
+            Log.e("WiFire", reason);
+        } else if (responseCode == WiFire.CAPTIVE_LOGIN_NETWORK_FAILURE) {
+            String reason = data.getStringExtra("reason");
+            if (reason == null)
+                reason = "Login failed because of network failure";
+            Log.e("WiFire", reason);
         }
     }
 }

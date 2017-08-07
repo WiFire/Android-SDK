@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -22,11 +23,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mobstac.wifire.WiFire;
 import com.mobstac.wifire.WiFireHotspot;
 import com.mobstac.wifire.core.ErrorCodes;
 import com.mobstac.wifire.core.WiFireException;
+import com.mobstac.wifire.core.WiFireInitException;
 import com.mobstac.wifire.enums.WiFiState;
 import com.mobstac.wifire.interfaces.AuthListener;
 import com.mobstac.wifire.interfaces.ConnectionListener;
@@ -144,24 +147,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startCaptiveLogin() {
-        wiFire.startAutomaticLogin(this, new WiFireErrorListener() {
-            @Override
-            public void onError(WiFireException e) {
-                if (e.getErrorCode() == ErrorCodes.USER_NOT_SET)
-                    askUserDetails();
-                else if (e.getErrorCode() == ErrorCodes.SMS_PERMISSION_DENIED) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        requestPermissions(
-                                new String[]{
-                                        Manifest.permission.READ_SMS,
-                                        Manifest.permission.RECEIVE_SMS
-                                }, REQUEST_SMS_PERMISSION);
-                    }
-                }
-                String error = e.getMessage();
-                com.mobstac.wifire.sdksample.utils.Util.snackBar(error, (Activity) mContext, null);
+        try {
+            wiFire.startAutomaticLogin(this);
+        } catch (WiFireInitException e) {
+            String error = e.getMessage();
+            Util.snackBar(error, (Activity) mContext, null);
+            if (e.getErrorCode() == ErrorCodes.USER_NOT_SET) {
+                askUserDetails();
             }
-        });
+        }
     }
 
     @Override
@@ -219,68 +213,39 @@ public class MainActivity extends AppCompatActivity {
         pd.setCancelable(false);
         pd.show();
 
-        wiFire.connectToNetwork(hotspot, new ConnectionListener() {
-            @Override
-            public void onSuccess() {
-                if (pd != null && pd.isShowing())
-                    pd.dismiss();
-                Util.snackBar("Connected to " + hotspot.getName(), (Activity) mContext, null);
-            }
-
-            @Override
-            public void onFailure(WiFireException wiFireException) {
-                Log.e("WiFire", wiFireException.getMessage());
-                if (pd != null && pd.isShowing())
-                    pd.dismiss();
-                String error = "Connection failed";
-
-                switch (wiFireException.getErrorCode()) {
-
-                    case ErrorCodes.USER_NOT_SET:
-                        //Must provide user's phone number to comply with TRAI regulations
-                        askUserDetails();
-                        break;
-
-                    case ErrorCodes.WIFI_DISABLED_ASSOCIATION_REJECT:
-                        //Rejected by the system
-                        error = "Rejected by the system";
-                        break;
-
-                    case ErrorCodes.WIFI_DISABLED_UNKNOWN_REASON:
-                    case ErrorCodes.UNKNOWN_ERROR:
-                        //Connection failed
-                        error = "Connection failed";
-                        break;
-
-                    case ErrorCodes.WIFI_DISABLED_DHCP_FAILURE:
-                        //DHCP failed
-                        error = "DHCP failed";
-                        break;
-
-                    case ErrorCodes.WIFI_DISABLED_DNS_FAILURE:
-                        //DNS failed
-                        error = "DNS failed";
-                        break;
-
-                    case ErrorCodes.WIFI_DISABLED_AUTH_FAILURE:
-                        //Password failed
-                        error = "Wrong password";
-                        break;
-
-                    case ErrorCodes.WIFI_DISABLED_LOW_SIGNAL:
-                        //Signal weak
-                        error = "Signal too weak to connect";
-                        break;
-
-                    case ErrorCodes.WIFI_DISABLED_BY_WIFI_MANAGER:
-                        //Disabled by system's WiFiManager
-                        error = "Network disabled by system";
-                        break;
+        try {
+            wiFire.connectToNetwork(hotspot, new ConnectionListener() {
+                @Override
+                public void onSuccess() {
+                    if (pd.isShowing())
+                        pd.dismiss();
+                    Util.snackBar("Connected to " + hotspot.getName(), (Activity) mContext, null);
                 }
 
-                Util.snackBar(error, (Activity) mContext, null);
+                @Override
+                public void onFailure(WiFireException wiFireException) {
+                    Log.e("WiFire", wiFireException.getMessage());
+                    if (pd.isShowing())
+                        pd.dismiss();
+                    Util.snackBar(wiFireException.getMessage(), (Activity) mContext, null);
+                }
+            });
+        } catch (WiFireInitException e) {
+            if (e.getErrorCode() == ErrorCodes.USER_NOT_SET)
+                //Must provide user's phone number to comply with TRAI regulations
+                askUserDetails();
+            else if (e.getErrorCode() == ErrorCodes.WIFI_CHANGE_PERMISSION_DENIED) {
+                //An OEM layer permission manager is blocking WiFi access. Ask the user to allow access manually
+                Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                startActivity(intent);
+                Toast.makeText(mContext, "Select Permission manager and set \"Change Wi-Fi connectivity\" to Accept", Toast.LENGTH_LONG).show();
             }
-        });
+            String error = e.getMessage();
+            Util.snackBar(error, (Activity) mContext, null);
+            if (pd.isShowing())
+                pd.dismiss();
+        }
     }
 
     @Override
@@ -313,6 +278,11 @@ public class MainActivity extends AppCompatActivity {
                 String reason = data.getStringExtra("reason");
                 if (reason == null)
                     reason = "Login cancelled";
+                Util.snackBar(reason, (Activity) mContext, null);
+            } else if (responseCode == WiFire.CAPTIVE_LOGIN_NETWORK_FAILURE) {
+                String reason = data.getStringExtra("reason");
+                if (reason == null)
+                    reason = "Login failed because of network failure";
                 Util.snackBar(reason, (Activity) mContext, null);
             } else {
                 Util.snackBar("Something went wrong", (Activity) mContext, null);
